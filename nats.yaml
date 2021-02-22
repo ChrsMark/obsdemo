@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats
+  labels:
+    app: nats
+spec:
+  clusterIP: None
+  ports:
+  - name: web
+    port: 8222
+    protocol: TCP
+  selector:
+    app: nats
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nats
+  labels:
+    role: main
+    app: name
+    some: somelabel
+  annotations:
+    co.elastic.metrics.natsqueue/module: nats
+    co.elastic.metrics.natsqueue/metricsets: stats
+    co.elastic.metrics.natsqueue/hosts: '${data.host}:${data.port}'
+spec:
+  containers:
+    - name: natsqueue
+      #image: nats
+      image: docker.elastic.co/integrations-ci/beats-nats:2.0.4-2
+      ports:
+        - name: web
+          containerPort: 8222
+          protocol: TCP
