@@ -18,21 +18,29 @@ Create and store a Slack webhook: https://www.elastic.co/guide/en/kibana/7.11/sl
 #minikube -n kube-system service kibana --url
 #kubectl -n kube-system port-forward svc/kibana 5601
 
-kubectl apply -f metricbeat-kubernetes.7.11.yaml
-kubectl apply -f filebeat-kubernetes.7.11.yaml
+kubectl apply -f nginx.yml
 
-kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -s productpage:9080/productpage | grep -o "<title>.*</title>"
+1. verify cloud.id, cloud.auth
 
-alert on Metrics Explorer based on requests
+2. explain and `kubectl apply -f filebeat-kubernetes.7.11.yaml`
 
-kubectl apply -f nats.yaml
+3. explain and `kubectl apply -f metricbeat-kubernetes.7.11.yaml` (if timeout then remove dashboard.setup)
 
-`term to highlight: "Generated config:"`
+4. Talk about istio and show live the changes
 
-alert on Metrics Explorer based on nats connections (nats.stats.total_connections)
+5. kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -s productpage:9080/productpage | grep -o "<title>.*</title>"
+while sleep 3; do kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -s productpage:9080/productpage | grep -o "<title>.*</title>"; done
+
+6. create an alert on Metrics Explorer based on `prometheus.istio_requests_total.rate`
+
+7. `term to highlight: "Generated config:"` and kubectl apply -f nats.yaml
+
+8. Show nats dashboards
 
 #QUERY: kubernetes.labels.k8s-app: "metricbeat"
 
+
+9. 
 ```
 cat << EOF | kubectl apply -f -
 apiVersion: v1

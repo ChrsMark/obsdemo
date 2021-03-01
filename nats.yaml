@@ -26,6 +26,7 @@ metadata:
     co.elastic.metrics.natsqueue/module: nats
     co.elastic.metrics.natsqueue/metricsets: stats
     co.elastic.metrics.natsqueue/hosts: '${data.host}:${data.port}'
+    co.elastic.logs.natsqueue/module: nats
 spec:
   containers:
     - name: natsqueue
